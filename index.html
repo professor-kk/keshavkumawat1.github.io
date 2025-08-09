@@ -85,6 +85,40 @@
             color: #555;
             display: none;
         }
+
+        /* Popup style */
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #1a1a1a;
+            color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px #00ff99;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        #popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #popup button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00ff99, #00ccff);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -95,6 +129,13 @@
     <footer>
         © 2025 Keshav | Built with ❤️ for Coders
     </footer>
+
+    <!-- Popup -->
+    <div id="popup">
+        <h2>🎉 Congratulations!</h2>
+        <p>You’ve unlocked access to ALL codes for FREE! 🚀</p>
+        <button onclick="closePopup()">OK</button>
+    </div>
 
     <script>
         const consoleBox = document.getElementById('console');
@@ -109,7 +150,7 @@
         ];
 
         let delay = 0;
-        lines.forEach((line, index) => {
+        lines.forEach((line) => {
             setTimeout(() => {
                 consoleBox.textContent += `> ${line}\n`;
             }, delay);
@@ -124,6 +165,16 @@
             document.querySelector('.button').style.display = 'inline-block';
             document.querySelector('footer').style.display = 'block';
         }, delay + 1000);
+
+        // Show popup after a short delay from welcome message
+        setTimeout(() => {
+            document.getElementById('popup').classList.add('show');
+        }, delay + 3000);
+
+        // Close popup function
+        function closePopup() {
+            document.getElementById('popup').classList.remove('show');
+        }
     </script>
 </body>
 </html>
