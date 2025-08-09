@@ -27,14 +27,14 @@
 
         #console {
             background-color: #f0f0f0;
-            color: #00aa66;
+            color: #000; /* All text black */
             width: 80%;
             max-width: 600px;
             padding: 20px;
             border-radius: 8px;
             font-size: 1rem;
-            text-align: center; /* Center text */
-            box-shadow: 0 0 15px #00aa66;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
             white-space: pre-wrap;
             min-height: 250px;
         }
@@ -43,15 +43,16 @@
             display: inline-block;
             padding: 8px 16px;
             margin-top: 10px;
-            background: linear-gradient(45deg, #00ff99, #00ccff);
-            color: #000;
+            background: #ddd; /* Light button background */
+            color: #000; /* Button text black */
             text-decoration: none;
             border-radius: 6px;
             font-weight: bold;
+            border: 1px solid #000;
         }
 
         a.button:hover {
-            box-shadow: 0 0 10px #00ff99;
+            background: #ccc;
         }
     </style>
 </head>
