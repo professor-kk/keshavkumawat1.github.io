@@ -25,7 +25,6 @@
             text-align: center;
         }
 
-        /* Fake console */
         #console {
             background-color: #000;
             color: #00ff99;
@@ -36,106 +35,28 @@
             font-size: 1rem;
             text-align: left;
             box-shadow: 0 0 15px #00ff99;
-            margin-bottom: 20px;
             white-space: pre-wrap;
-            min-height: 200px;
-        }
-
-        h1 {
-            font-size: 3rem;
-            color: #00ff99;
-            animation: glow 2s ease-in-out infinite alternate;
-            display: none; /* hidden until console finishes */
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 5px #00ff99, 0 0 20px #00ff99; }
-            to { text-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99; }
-        }
-
-        p {
-            margin: 20px 0;
-            font-size: 1.2rem;
-            color: #bbb;
-            display: none;
+            min-height: 250px;
         }
 
         a.button {
             display: inline-block;
-            padding: 12px 24px;
-            margin-top: 20px;
+            padding: 8px 16px;
+            margin-top: 10px;
             background: linear-gradient(45deg, #00ff99, #00ccff);
             color: #000;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: bold;
-            transition: 0.3s;
-            display: none;
         }
 
         a.button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px #00ff99;
+            box-shadow: 0 0 10px #00ff99;
         }
-
-        footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 0.9rem;
-            color: #555;
-            display: none;
-        }
-
-        /* Popup style */
-        #popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: #1a1a1a;
-            color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px #00ff99;
-            text-align: center;
-            width: 80%;
-            max-width: 400px;
-            transition: transform 0.3s ease-in-out;
-            z-index: 1000;
-        }
-
-        #popup.show {
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        #popup button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: linear-gradient(45deg, #00ff99, #00ccff);
-            border: none;
-            border-radius: 8px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
     </style>
 </head>
 <body>
     <div id="console"></div>
-    <h1>🚀 Keshav's Code Hub</h1>
-    <p>Sharing clean & simple code in C, C++, and Python for everyone 💻</p>
-    <a href="codes" class="button">📜 View My Codes</a>
-    <footer>
-        © 2025 Keshav | Built with ❤️ for Coders
-    </footer>
-
-    <!-- Popup -->
-    <div id="popup">
-        <h2>🎉 Congratulations!</h2>
-        <p>You’ve unlocked access to ALL codes for FREE! 🚀</p>
-        <button onclick="closePopup()">OK</button>
-    </div>
 
     <script>
         const consoleBox = document.getElementById('console');
@@ -154,27 +75,18 @@
             setTimeout(() => {
                 consoleBox.textContent += `> ${line}\n`;
             }, delay);
-            delay += 800; // time gap per line
+            delay += 800;
         });
 
-        // Show welcome message after all commands
+        // After processing, clear console and show all info inside it
         setTimeout(() => {
-            consoleBox.textContent += "\n> Welcome to Keshav's Code Hub\n";
-            document.querySelector('h1').style.display = 'block';
-            document.querySelector('p').style.display = 'block';
-            document.querySelector('.button').style.display = 'inline-block';
-            document.querySelector('footer').style.display = 'block';
+            consoleBox.textContent = "";
+            consoleBox.innerHTML = 
+                "> Welcome to Keshav's Code Hub 🚀\n\n" +
+                "Sharing clean & simple code in C, C++, and Python for everyone 💻\n\n" +
+                "🎉 Congratulations! You’ve unlocked access to ALL codes for FREE!\n\n" +
+                "<a href='codes' class='button'>📜 View My Codes</a>\n";
         }, delay + 1000);
-
-        // Show popup after a short delay from welcome message
-        setTimeout(() => {
-            document.getElementById('popup').classList.add('show');
-        }, delay + 3000);
-
-        // Close popup function
-        function closePopup() {
-            document.getElementById('popup').classList.remove('show');
-        }
     </script>
 </body>
 </html>
