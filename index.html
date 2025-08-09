@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keshav's Code Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #00ff99;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #00ff99, 0 0 20px #00ff99; }
+            to { text-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99; }
+        }
+
+        p {
+            margin: 20px 0;
+            font-size: 1.2rem;
+            color: #bbb;
+        }
+
+        a.button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin-top: 20px;
+            background: linear-gradient(45deg, #00ff99, #00ccff);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        a.button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #00ff99;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Keshav's Code Hub</h1>
+    <p>Sharing clean & simple code in C, C++, and Python for everyone 💻</p>
+    <a href="CODES.md" class="button">📜 View My Codes</a>
+    <footer>
+        © 2025 Keshav | Built with ❤️ for Coders
+    </footer>
+</body>
+</html>
