@@ -25,10 +25,27 @@
             text-align: center;
         }
 
+        /* Fake console */
+        #console {
+            background-color: #000;
+            color: #00ff99;
+            width: 80%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: left;
+            box-shadow: 0 0 15px #00ff99;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            min-height: 200px;
+        }
+
         h1 {
             font-size: 3rem;
             color: #00ff99;
             animation: glow 2s ease-in-out infinite alternate;
+            display: none; /* hidden until console finishes */
         }
 
         @keyframes glow {
@@ -40,6 +57,7 @@
             margin: 20px 0;
             font-size: 1.2rem;
             color: #bbb;
+            display: none;
         }
 
         a.button {
@@ -52,6 +70,7 @@
             border-radius: 8px;
             font-weight: bold;
             transition: 0.3s;
+            display: none;
         }
 
         a.button:hover {
@@ -64,15 +83,47 @@
             bottom: 10px;
             font-size: 0.9rem;
             color: #555;
+            display: none;
         }
     </style>
 </head>
 <body>
+    <div id="console"></div>
     <h1>🚀 Keshav's Code Hub</h1>
     <p>Sharing clean & simple code in C, C++, and Python for everyone 💻</p>
     <a href="codes" class="button">📜 View My Codes</a>
     <footer>
         © 2025 Keshav | Built with ❤️ for Coders
     </footer>
+
+    <script>
+        const consoleBox = document.getElementById('console');
+        const lines = [
+            "Initializing system...",
+            "Loading dependencies...",
+            "Fetching code repository...",
+            "Compiling C programs...",
+            "Optimizing Python scripts...",
+            "Connecting to GitHub...",
+            "Finalizing setup..."
+        ];
+
+        let delay = 0;
+        lines.forEach((line, index) => {
+            setTimeout(() => {
+                consoleBox.textContent += `> ${line}\n`;
+            }, delay);
+            delay += 800; // time gap per line
+        });
+
+        // Show welcome message after all commands
+        setTimeout(() => {
+            consoleBox.textContent += "\n> Welcome to Keshav's Code Hub\n";
+            document.querySelector('h1').style.display = 'block';
+            document.querySelector('p').style.display = 'block';
+            document.querySelector('.button').style.display = 'inline-block';
+            document.querySelector('footer').style.display = 'block';
+        }, delay + 1000);
+    </script>
 </body>
 </html>
