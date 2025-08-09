@@ -2,201 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keshav's Code Hub</title>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #f8fafc;
-        color: #000;
+        background: white;
+        color: black;
+        font-family: 'Segoe UI', sans-serif;
         text-align: center;
         padding: 20px;
     }
-    h1 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .highlight {
-        background: linear-gradient(90deg, red, orange, yellow, green, blue, purple);
-        -webkit-background-clip: text;
-        color: transparent;
-        font-weight: bold;
-    }
-    #searchBar {
-        padding: 10px;
-        width: 300px;
-        margin: 20px auto;
-        font-size: 1rem;
-        border: 2px solid #ccc;
+    .console {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        font-family: monospace;
+        font-size: 16px;
+        padding: 15px;
         border-radius: 8px;
-        outline: none;
+        margin: 0 auto;
+        width: 80%;
+        height: 300px;
+        overflow-y: auto;
+        text-align: left;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .keyword { color: #569cd6; font-weight: bold; }
+    .string { color: #ce9178; }
+    .number { color: #b5cea8; }
+    .function { color: #dcdcaa; }
+    h1 {
+        font-size: 2em;
+        font-weight: bold;
+    }
+    .rgb-text {
+        background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+    .search-box {
+        margin: 20px 0;
+        padding: 10px;
+        font-size: 16px;
+        width: 50%;
+        border: 2px solid black;
+        border-radius: 5px;
     }
     .card-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
         justify-content: center;
+        gap: 15px;
     }
     .card {
-        background: #fff;
-        color: #000;
+        background: #f5f5f5;
+        padding: 20px;
         width: 200px;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        cursor: pointer;
-        transition: transform 0.2s;
         text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: 0.3s;
     }
     .card:hover {
-        transform: translateY(-5px);
+        transform: scale(1.05);
     }
-    .card svg {
-        width: 50px;
-        height: 50px;
+    svg {
+        width: 40px;
+        height: 40px;
         margin-bottom: 10px;
     }
-    /* Console */
-    .console-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.7);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-    .console-window {
-        background: #1e1e1e;
-        color: #fff;
-        width: 80%;
-        max-height: 80%;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-    .console-header {
-        padding: 10px;
-        background: #333;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .console-header button {
-        background: #007acc;
-        border: none;
-        padding: 5px 10px;
-        color: #fff;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 5px;
-    }
-    .console-content {
-        padding: 15px;
-        overflow-y: auto;
-        font-family: monospace;
-        font-size: 14px;
-        white-space: pre;
-        flex-grow: 1;
-    }
-    pre code {
-        font-family: 'Courier New', monospace;
-    }
 </style>
-<!-- Highlight.js for syntax highlighting -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
-<h1>Welcome to <span class="highlight">Keshav's Code Hub</span></h1>
-<input type="text" id="searchBar" placeholder="Search code files...">
-<div class="card-container" id="codes"></div>
 
-<div class="console-overlay" id="consoleOverlay">
-    <div class="console-window">
-        <div class="console-header">
-            <span id="consoleTitle">Code Viewer</span>
-            <div>
-                <button onclick="copyCode()">Copy</button>
-                <button onclick="downloadCode()">Download</button>
-                <button onclick="closeConsole()">Close</button>
-            </div>
-        </div>
-        <div class="console-content">
-            <pre><code id="codeBlock" class="c"></code></pre>
-        </div>
+<h1>Welcome to <span class="rgb-text">Keshav's Code Hub</span></h1>
+
+<div class="console" id="console"></div>
+
+<input type="text" id="search" class="search-box" placeholder="Search codes...">
+
+<div class="card-container" id="cardContainer">
+    <div class="card">
+        <svg fill="#000000" viewBox="0 0 32 32"><path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-14.016h24v14.016q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM4 10.016v-4q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v4h-24zM6.016 20h1.984v-1.984h-1.984v1.984zM6.016 16h1.984v-1.984h-1.984v1.984zM6.016 8h1.984v-1.984h-1.984v1.984zM8 18.016h2.016v-2.016h-2.016v2.016zM10.016 22.016h4v-2.016h-4v2.016zM10.016 8h1.984v-1.984h-1.984v1.984zM14.016 8h12v-1.984h-12v1.984z"></path></svg>
+        Prime Number Checker
+    </div>
+    <div class="card">
+        <svg fill="#000000" viewBox="0 0 32 32"><path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-14.016h24v14.016q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM4 10.016v-4q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v4h-24zM6.016 20h1.984v-1.984h-1.984v1.984zM6.016 16h1.984v-1.984h-1.984v1.984zM6.016 8h1.984v-1.984h-1.984v1.984zM8 18.016h2.016v-2.016h-2.016v2.016zM10.016 22.016h4v-2.016h-4v2.016zM10.016 8h1.984v-1.984h-1.984v1.984zM14.016 8h12v-1.984h-12v1.984z"></path></svg>
+        Fibonacci Generator
     </div>
 </div>
 
 <script>
-    const username = "professor-kk";
-    const repo = "professor-kk.github.io";
-    const codesContainer = document.getElementById("codes");
-    const searchBar = document.getElementById("searchBar");
-    const consoleOverlay = document.getElementById("consoleOverlay");
-    const codeBlock = document.getElementById("codeBlock");
-    let currentCode = "";
-    let currentFileName = "";
+const consoleEl = document.getElementById("console");
+const commands = [
+    `<span class="keyword">int</span> main() {`,
+    `    <span class="keyword">printf</span>(<span class="string">"Hello World"</span>);`,
+    `    <span class="keyword">return</span> <span class="number">0</span>;`,
+    `}`,
+    `<span class="function">compile</span> main.c`,
+    `<span class="function">run</span> program.exe`
+];
 
-    const svgs = [
-        `<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/></svg>`,
-        `<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>`,
-        `<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M2 12h20M12 2v20"/></svg>`
-    ];
+let i = 0;
+function typeCommand() {
+    if (i < commands.length) {
+        consoleEl.innerHTML += commands[i] + "<br>";
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+        i++;
+        setTimeout(typeCommand, 400);
+    } else {
+        setTimeout(() => {
+            consoleEl.innerHTML = `<span class="keyword">// All processes completed successfully.</span><br><br><h2 style="text-align:center; color:white;">Welcome to <span style="background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Keshav's Code Hub</span></h2>`;
+        }, 500);
+    }
+}
+typeCommand();
 
-    fetch(`https://api.github.com/repos/${username}/${repo}/contents/backend`)
-        .then(res => res.json())
-        .then(files => {
-            files.forEach(file => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `${svgs[Math.floor(Math.random() * svgs.length)]}<div>${file.name}</div>`;
-                card.addEventListener("click", () => openConsole(file.name, file.download_url));
-                codesContainer.appendChild(card);
-            });
-        });
-
-    searchBar.addEventListener("input", () => {
-        const query = searchBar.value.toLowerCase();
-        Array.from(codesContainer.children).forEach(card => {
-            const name = card.textContent.toLowerCase();
-            card.style.display = name.includes(query) ? "block" : "none";
-        });
+// Search Functionality
+document.getElementById("search").addEventListener("input", function() {
+    const query = this.value.toLowerCase();
+    document.querySelectorAll(".card").forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(query) ? "block" : "none";
     });
-
-    function openConsole(name, url) {
-        fetch(url)
-            .then(res => res.text())
-            .then(code => {
-                currentCode = code;
-                currentFileName = name;
-                codeBlock.textContent = code;
-                hljs.highlightElement(codeBlock);
-                document.getElementById("consoleTitle").textContent = name;
-                consoleOverlay.style.display = "flex";
-            });
-    }
-
-    function closeConsole() {
-        consoleOverlay.style.display = "none";
-    }
-
-    function copyCode() {
-        navigator.clipboard.writeText(currentCode);
-        alert("Code copied to clipboard!");
-    }
-
-    function downloadCode() {
-        const blob = new Blob([currentCode], {type: "text/plain"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = currentFileName;
-        a.click();
-    }
+});
 </script>
+
 </body>
 </html>
