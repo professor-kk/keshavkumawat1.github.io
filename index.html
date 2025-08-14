@@ -1,38 +1,165 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Anonymous Chat</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, Arial, sans-serif;
+    background-color: #e5ddd5;
+    background-image: url('https://i.imgur.com/fF2HRbN.png'); /* WhatsApp-like pattern without logos */
+    background-repeat: repeat;
+    background-size: auto;
+  }
+  header {
+    padding: 12px 16px;
+    background: #075e54;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border-bottom: 1px solid #043d35;
+  }
+  #log {
+    height: 70vh;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .msg {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    position: relative;
+  }
+  .sent {
+    background: #dcf8c6;
+    align-self: flex-end;
+    border-bottom-right-radius: 0;
+  }
+  .received {
+    background: white;
+    align-self: flex-start;
+    border-bottom-left-radius: 0;
+  }
+  .meta {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 4px;
+    text-align: right;
+  }
+  #typing {
+    font-size: 14px;
+    opacity: 0.7;
+    padding: 0 16px;
+    height: 20px;
+  }
+  form {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    background: #f0f0f0;
+    border-top: 1px solid #ccc;
+  }
+  input, button {
+    font-size: 16px;
+  }
+  #text {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    background: white;
+    outline: none;
+  }
+  #send {
+    padding: 10px 16px;
+    background: #075e54;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  #send:hover {
+    background: #0b6c61;
+  }
+</style>
+</head>
+<body>
+  <header>Anonymous Chat</header>
+  <main id="log"></main>
+  <div id="typing"></div>
+  <form id="form" autocomplete="off">
+    <input id="text" type="text" placeholder="Type a message…" maxlength="2000" />
+    <button id="send" type="submit">➤</button>
+  </form>
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const socket = io();
+  const log = document.getElementById("log");
+  const typingDiv = document.getElementById("typing");
+  const form = document.getElementById("form");
+  const input = document.getElementById("text");
+  let typingTimeout;
 
-app.use(express.static("public"));
+  function tsToTime(ts) {
+    const d = new Date(ts);
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
+  function addMsg({ text, ts, self }) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg " + (self ? "sent" : "received");
+    const content = document.createElement("div");
+    content.textContent = text;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = tsToTime(ts);
+    wrap.appendChild(content);
+    wrap.appendChild(meta);
+    log.appendChild(wrap);
+    log.scrollTop = log.scrollHeight;
+  }
 
-  // Message received
-  socket.on("chat:msg", (text) => {
-    const safeText = String(text ?? "").slice(0, 2000);
-    if (!safeText.trim()) return;
-    io.emit("chat:msg", { text: safeText, ts: Date.now() });
+  socket.on("chat:msg", (msg) => {
+    addMsg({ ...msg, self: false });
   });
 
-  // Typing events
   socket.on("chat:typing", () => {
-    socket.broadcast.emit("chat:typing");
+    typingDiv.textContent = "Someone is typing...";
   });
 
   socket.on("chat:stopTyping", () => {
-    socket.broadcast.emit("chat:stopTyping");
+    typingDiv.textContent = "";
   });
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    const ts = Date.now();
+    addMsg({ text, ts, self: true }); // show instantly
+    socket.emit("chat:msg", text);
+    socket.emit("chat:stopTyping");
+    input.value = "";
+    input.focus();
   });
-});
 
-server.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
-});
-
+  input.addEventListener("input", () => {
+    socket.emit("chat:typing");
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.emit("chat:stopTyping");
+    }, 1000);
+  });
+</script>
+</body>
+</html>
