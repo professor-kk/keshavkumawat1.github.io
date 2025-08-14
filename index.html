@@ -1,80 +1,38 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Anonymous Chat</title>
-  <style>
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Arial,sans-serif;background:#0b1324;color:#e6e9ef}
-    header{padding:12px 16px;background:#111a33;border-bottom:1px solid #24304f}
-    #log{height:70vh;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
-    .msg{background:#141f3d;border:1px solid #2a3b67;padding:10px 12px;border-radius:12px;max-width:800px;white-space:pre-wrap;word-wrap:break-word}
-    .meta{font-size:12px;opacity:.7;margin-top:4px}
-    form{display:flex;gap:8px;padding:12px;background:#111a33;border-top:1px solid #24304f}
-    input,button{font-size:16px}
-    #text{flex:1;padding:10px;border-radius:10px;border:1px solid #2a3b67;background:#0d1730;color:#e6e9ef;outline:none}
-    #send{padding:10px 16px;border:1px solid #2a3b67;background:#1a2750;color:#e6e9ef;border-radius:10px;cursor:pointer}
-    #send:hover{filter:brightness(1.1)}
-    .tip{font-size:12px;opacity:.75;margin-left:8px}
-  </style>
-</head>
-<body>
-  <header>
-    <strong>Anonymous Chat</strong>
-    <span class="tip">Messages are public to everyone connected. No names collected.</span>
-  </header>
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
-  <main id="log"></main>
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-  <form id="form" autocomplete="off">
-    <input id="text" type="text" placeholder="Type a message… (press Enter)" maxlength="2000" />
-    <button id="send" type="submit">Send</button>
-  </form>
+app.use(express.static("public"));
 
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-0dI3GWDst+dG2Q3W8b0dSlZbGQbO7WJt7mP2D9PzS0pD/5mY5+vG4f2ef6WJmF0C" crossorigin="anonymous"></script>
-  <script>
-    const socket = io(); // connects to same-origin server
-    const log = document.getElementById("log");
-    const form = document.getElementById("form");
-    const input = document.getElementById("text");
+io.on("connection", (socket) => {
+  console.log("A user connected");
 
-    function tsToTime(ts){
-      const d = new Date(ts);
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    }
+  // Message received
+  socket.on("chat:msg", (text) => {
+    const safeText = String(text ?? "").slice(0, 2000);
+    if (!safeText.trim()) return;
+    io.emit("chat:msg", { text: safeText, ts: Date.now() });
+  });
 
-    function addMsg({ text, ts }){
-      const wrap = document.createElement("div");
-      wrap.className = "msg";
-      const content = document.createElement("div");
-      content.textContent = text;
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      meta.textContent = "Posted • " + tsToTime(ts);
-      wrap.appendChild(content);
-      wrap.appendChild(meta);
-      log.appendChild(wrap);
-      log.scrollTop = log.scrollHeight;
-    }
+  // Typing events
+  socket.on("chat:typing", () => {
+    socket.broadcast.emit("chat:typing");
+  });
 
-    socket.on("chat:msg", addMsg);
+  socket.on("chat:stopTyping", () => {
+    socket.broadcast.emit("chat:stopTyping");
+  });
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
-      socket.emit("chat:msg", text);
-      input.value = "";
-      input.focus();
-    });
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
 
-    // Optional: send on Enter without shift
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        form.dispatchEvent(new Event("submit"));
-      }
-    });
-  </script>
-</body>
-</html>
+server.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});
+
